@@ -1,5 +1,13 @@
 # soverynode
-A PWA for your Bitcoin node
+When we download a hot wallet for our phone, we must depend on the wallet provider's Bitcoin node. If we run a full node, but do not use it to transact, then our node is doing nothing to protect us.
+
+But when we use a full node (including pruned) to transact with Bitcoin, our node has now become an "economical node" and we are active participants in the Bitcoin network.
+
+With soverynode, your node can become an economical node and Bitcoin Core can be your portable hot wallet.
+
+Soverynode is written in nodejs and html. Once its running, it creates a secure tunnel between your localhost and the internet with localtunnel. Follow the link, and you will be taken to a GUI of your Bitcoin Core node that makes simple RPC calls. 
+
+## How to install
 
 Make sure your Bitcoin node is running
 
