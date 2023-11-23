@@ -1,0 +1,614 @@
+  <!DOCTYPE html>
+  <html>
+    <meta name="application-name" content="LayerTwoLabs">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="https://btcapsule.com/images/qrCode.png">
+    <meta name="theme-color" content="#000000">
+    <link rel="apple-touch-icon" href="https://btcapsule.com/images/qrCode.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="My Node">
+    <meta name="mobile-web-app-capable" content="yes">
+    <head>
+      <script src="https://unpkg.com/html5-qrcode"></script>
+    </head>
+    <style>
+      body {
+        color: white;
+        background: black;
+      }
+
+      h2 {
+        color: white;
+        font-size: 60px;
+        font-family: sans-serif;
+        margin-bottom: 20px;
+        margin-left: 40px;
+        top: 20px;
+      }
+
+      button {
+        background-color: #ffffff;
+        color: black;
+        padding: 20px 25px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 24px;
+        margin: 10px;
+        z-index: 999;
+      }
+
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid;
+      }
+
+      th {
+        background-color: black;
+        color: white;
+      }
+
+      tr:hover {
+        background-color: #D6EEEE;
+      }
+
+      tr:nth-child(even) {
+        background-color: black;
+        color: white;
+      }
+
+      .center-table {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      #balance {
+        color: white;
+        font-size: 100px;
+        font-family: sans-serif;
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      #center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 15px;
+        margin-bottom: 15px;
+      }
+
+      #qrcode {
+        text-align: center;
+        height: 0;
+      }
+
+      #qrcode-wrapper {
+        margin-top: 600px;
+        display: none;
+      }
+
+      #address {
+        color: white;
+        font-size: 36px;
+        font-family: sans-serif;
+        text-align: center;
+        margin-top: 200px;
+        margin-right: auto;
+
+        margin-left: auto;
+        justify-content: center;
+        bottom: 500px;
+        width: 600px;
+        display: flex;
+        word-wrap: break-word;
+      }
+
+      #transactions {
+        font-family: sans-serif;
+        font-size: 46px;
+      }
+
+      #sendForm {
+        position: absolute;
+        top: 400px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      #button-container {
+        display: flex;
+        justify-content: center;
+      }
+
+      #button-container2 {
+        position: absolute;
+        bottom: 200px;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #amount-container {
+        display: inline-block;
+      }
+
+      #amount,
+      #btc {
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      #amount {
+        background-color: black;
+        color: white;
+        font-size: 80px;
+        width: 100px;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        border: none;
+        outline: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+      }
+
+      #btcAddress {
+        margin-top: 200px;
+        background-color: black;
+        color: white;
+        font-size: 32px;
+        width: 800px;
+        border: none;
+        outline: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        border-bottom: 1px solid white;
+      }
+
+
+      #feerate {
+        color: white;
+        font-size: 36px;
+        font-family: sans-serif;
+        text-align: center;
+       
+        margin-right: auto;
+
+        margin-left: auto;
+        justify-content: center;
+        word-wrap: break-word;
+      }
+
+
+      #html5-qrcode-button-camera-stop {
+        visibility: hidden;
+      }
+     
+    </style>
+    <body>
+      <div id="reader" style="visibility: hidden; width: 100%; height: 100%; position: absolute; top:0;"></div>
+      <h2 class="exclude">My Node</h2>
+      <br>
+      <br>
+      <div id="button-container" class="exclude">
+        <button id="displayBalance">getbalance</button>
+        <button onclick="runRPC('getblockchaininfo')">getblockchaininfo</button>
+        <button onclick="runRPC('getmempoolinfo')">getmempoolinfo</button>
+        <button onclick="runRPC('getwalletinfo')">getwalletinfo</button>
+      </div>
+      <div id="balance"></div>
+      <br>
+      <br>
+      <div id="center">
+        <div id="qrcode-wrapper" style="border: 10px solid white; display: none; padding: 10px;">
+          <div id="qrcode"></div>
+        </div>
+      </div>
+      <br>
+      <br>
+      <div id="center">
+        <div id="transactions"></div>
+      </div>
+      <br>
+      <br>
+      <br>
+      <div id="center-results" style="display: flex; margin-top: 400px; justify-content: center; align-items: center;">
+        <p id="result" style="justify-content:center; align-items:center; text-align: center;"></p>
+      </div>
+        <div id="address"></div>
+      
+      <div id="button-container2" class="exclude">
+        <button class="exclude" onclick="runRPC('getnewaddress'); setTimeout(function() {document.getElementById('qrcode-wrapper').style.display = 'inline-block';}, 500);"> RECEIVE</button>
+        <button style="width:155px;" id="sendButton" class="exclude">SEND</button> 
+      </div>
+      <br>
+      <br>
+      <br>
+      <div id="center">
+        <div id="sendForm" style="display: none;">
+          <form id="btcForm" style="margin-left: auto; margin-right: auto; text-align: center;">
+            <label for="amount"></label>
+            <br>
+            <div id="amount-container">
+              <input type="number" id="amount" name="amount" min="0" value="0" maxlength="15" style="display: inline-block; vertical-align: middle;">
+              <p id="btc" style="display: inline-block; vertical-align: middle; font-size: 60px; font-family: monospace;"> BTC</p>
+              <br>
+              <br>
+              <button id="scanButton" type="button">SCAN</button>
+            </div>
+            <label for="btcAddress"></label>
+            <br>
+            <input type="text" id="btcAddress" name="btcAddress" value="Enter Address">
+            <br><br>
+               <p id="feerate"></p>            
+            <button id="confirm" style="display: block; margin: auto; text-align: center; font-size:50px; margin-top: 180px; color: black;">CONFIRM</button>
+          </form>
+
+        </div>
+      </div>
+      <bt>
+        <br>
+        <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+        <script>
+       
+         let timer = null; 
+         estimateSmartFee()
+         runRPC('getbalance') 
+         runRPC('getunconfirmedbalance') 
+         if (timer !== null) {
+            clearInterval(timer);
+          }
+          timer = setInterval(function() {
+            runRPC('getbalance');
+            runRPC('getunconfirmedbalance');
+            runRPC('listtransactions');
+          }, 5000);
+          setTimeout(function() {
+            runRPC('listtransactions')
+          }, 1000)
+
+          function showDivs(divIds) {
+            // Get all divs
+            let divs = document.getElementsByTagName('div');
+            // Hide all divs
+            for (let i = 0; i < divs.length; i++) {
+              // Check if the div has the 'exclude' class
+              if (!divs[i].classList.contains('exclude')) {
+                divs[i].style.visibility = 'hidden';
+                divs[i].style.height = "0px";
+              }
+            }
+            // Show only the divs you want
+            for (let i = 0; i < divIds.length; i++) {
+              document.getElementById(divIds[i]).style.visibility = 'visible';
+            }
+          }
+
+          function hide(elementIds) {
+            // Loop through the array of element IDs
+            for (var i = 0; i < elementIds.length; i++) {
+              // Get the element by its ID
+              var element = document.getElementById(elementIds[i]);
+              element.style.visibility = 'hidden';
+            }
+          }
+          document.getElementById('amount').addEventListener('input', function() {
+            // Replace the decimal point with an empty string
+            if (this.value.length > 11) {
+              this.value = this.value.slice(0, 11);
+            }
+            if (this.value.length > 1) {
+              if (event.data === '.') {
+                this.style.width = 150 + 'px';
+              } else {
+                // Adjust the width of the input field based on the length of the input value
+                this.style.width = (this.value.length * 50) + 'px';
+              }
+            }
+          });
+
+          function isValidBitcoinAddress(address) {
+            // Regular expression for Bitcoin addresses
+            var regex = new RegExp("^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,60}$");
+            return regex.test(address);
+          }
+
+          function onScanSuccess(decodedText, decodedResult) {
+            // Check if the scanned text is a Bitcoin URI
+            if (decodedText.startsWith('bitcoin:')) {
+              // Parse the Bitcoin URI
+              var uri = new URL(decodedText);
+              var address = uri.pathname;
+              var amount = uri.searchParams.get('amount');
+              // Paste the address into the address field
+              document.getElementById('btcAddress').value = address;
+
+              // Paste the amount into the amount field
+              if (amount) {
+                document.getElementById('amount').value = amount;
+                document.getElementById('amount').style.width = (amount.length * 50) + 'px';
+              }
+            } else if (isValidBitcoinAddress(decodedText)) {
+              // Paste the scanned Bitcoin address into the address field
+              document.getElementById('btcAddress').value = decodedText;
+              document.getElementById('amount').value = 0;
+              document.getElementById('amount').style.width = '150px';
+            } else {
+              // Throw an error if the scanned text is not a valid Bitcoin address
+              throw new Error('Invalid Bitcoin address');
+            }
+            // Stop the scanner
+            document.getElementById("html5-qrcode-button-camera-stop").click();
+            document.getElementById('btc').style.visibility = 'visible';
+            document.getElementById('sendForm').style.display = 'block';
+            document.getElementById('result').style.visibility = 'hidden';
+            document.getElementById('feerate').style.visibility = "visible";
+              
+            // Use the function
+            let divIdsToShow = ['sendForm', 'btcAddress', 'amount', 'confirm'];
+            showDivs(divIdsToShow);
+          }
+          document.getElementById('confirm').addEventListener('click', function(event) {
+            event.preventDefault();
+            var amount = document.getElementById('amount').value;
+            var btcAddress = document.getElementById('btcAddress').value;
+            hide(['result', 'feerate', 'btcAddress', 'scanButton', 'btc', 'amount', 'confirm'])
+            let divIdsToShow = ['balance', 'transactions'];
+            showDivs(divIdsToShow);
+            sendToAddress(btcAddress, amount);            
+            console.log('Amount: ' + amount + " " + 'Address: ' + btcAddress)
+          });
+          let html5QrcodeScanner = null;
+          // Add an event listener to the Send button
+          document.getElementById('sendButton').addEventListener('click', function() {
+            document.getElementById('scanButton').style.visibility = 'visible';
+            document.getElementById('btc').style.visibility = 'visible';
+            document.getElementById('confirm').style.visibility = 'visible';
+            document.getElementById('btcAddress').value = 'Enter Address';
+            document.getElementById('amount').value = '0';
+            document.getElementById('btcAddress').addEventListener('change', function() {            	
+            if (this.value == 'Enter Address') {
+	       this.value = '';
+		   }
+	    })
+            document.getElementById('feerate').style.visibility = "visible";
+
+            document.getElementById('sendForm').style.display = 'block';
+            document.getElementById('result').style.visibility = 'hidden';
+            // Use the function
+            let divIdsToShow = ['sendForm', 'feerate', 'btcAddress', 'amount', 'confirm', 'reader'];
+            showDivs(divIdsToShow);
+            });
+
+            document.getElementById('scanButton').addEventListener('click', function() {
+              navigator.mediaDevices.getUserMedia({
+                video: true
+              }).then(function(stream) {
+                if (html5QrcodeScanner == null) {
+                  let divIdsToShow = ['reader'];
+                  showDivs(divIdsToShow);
+                  document.getElementById('reader').style.height = '400px';
+                  html5QrcodeScanner = new Html5QrcodeScanner("reader", {
+                    fps: 20,
+                    qrbox: {
+                      width: 450,
+                      height: 450
+                    },
+                    videoConstraints: {
+                      facingMode: {
+                        exact: "environment"
+                      }
+                    },
+                    supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA]
+                  });
+                  document.getElementById("scanButton").click();
+                  // Create a MutationObserver instance
+                  let observer = new MutationObserver(function(mutations) {
+                    // For each mutation
+                    mutations.forEach(function(mutation) {
+                      // If nodes are added
+                      if (mutation.addedNodes.length) {
+                        // For each added node
+                        mutation.addedNodes.forEach(function(node) {
+                          // If the node is a button
+                          if (node.nodeName === 'BUTTON') {
+                            // Trigger a click event
+                            node.click();
+                          }
+                        });
+                      }
+                    });
+                  });
+                  // Start observing the document with the configured parameters
+                  observer.observe(document, {
+                    childList: true,
+                    subtree: true
+                  });
+                  // Start scanning with the rear camera
+                  html5QrcodeScanner.render(onScanSuccess);
+                  hide(['btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm', 'result'])                
+                
+                 } else {
+                  let divIdsToShow = ['reader'];
+                  showDivs(divIdsToShow);
+                  document.getElementById('reader').style.height = '50%';
+                  // Start scanning with the rear camera
+                  html5QrcodeScanner.render(onScanSuccess);
+                  hide(['btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm', 'result'])                
+               }
+              }).catch(function(err) {
+                document.getElementById('scanButton').style.visibility = 'visible';
+                document.getElementById('btc').style.visibility = 'visible';
+                document.getElementById('confirm').style.visibility = 'visible';
+                document.getElementById('feerate').style.visibility = 'visible';
+                
+                document.getElementById('btcAddress').value = 'Enter Address';
+                document.getElementById('amount').value = '0';
+                document.getElementById('btcAddress').addEventListener('focus', function() {
+                  // Clear the value of the input field
+                  this.value = '';
+                });
+                document.getElementById('sendForm').style.display = 'block';
+                document.getElementById('result').style.visibility = 'hidden';
+                // Use the function
+                let divIdsToShow = ['sendForm', 'btcAddress', 'amount', 'confirm', 'reader'];
+                showDivs(divIdsToShow);
+                document.getElementById('reader').style.height = '100%';
+              })
+            })
+
+          document.getElementById("displayBalance").addEventListener("click", function displayBalance() {
+            hide(['btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm', 'result'])
+            // Use the function
+            let divIdsToShow = ['balance', 'transactions'];
+            showDivs(divIdsToShow);
+          })
+
+          function runRPC(rpcMethod, args) {
+		let argsString = '';
+		 if (args && args.length > 0) {
+		  argsString = args.join('/');
+		 }
+            fetch(`${window.location.href}/runrpc/${rpcMethod}/${argsString}`).then(response => response.json()).then(data => {
+              if (rpcMethod === 'getbalance') {
+                confirmedBalance = data;
+              } else if (rpcMethod === 'getunconfirmedbalance') {
+                unconfirmedBalance = data;
+              }
+              totalBalance = confirmedBalance + unconfirmedBalance;
+              document.getElementById("balance").innerHTML = `${totalBalance} BTC`;
+              
+
+
+
+                if (rpcMethod === 'getnewaddress') {
+                hide(['result', 'feerate', 'btcAddress', 'scanButton', 'btc', 'amount', 'confirm'])
+                let divIdsToShow = ['qrcode', 'address', 'qrcode-wrapper'];
+                showDivs(divIdsToShow);
+                document.getElementById('qrcode-wrapper').style.height = '512px';
+                document.getElementById('qrcode-wrapper').style.width = '512px';
+                document.getElementById("address").innerHTML = `${data}`;
+                document.getElementById("qrcode").innerHTML = ''; // Clear the QR code
+                
+                let qrcode = new QRCode(document.getElementById("qrcode"), {
+                  text: `bitcoin:${data}`,
+                  width: 512,
+                  height: 512,
+                  colorDark: "#000000",
+                  colorLight: "#ffffff",
+                  correctLevel: QRCode.CorrectLevel.H
+                });
+                qrcode.addQuietZone(10);
+              }
+              if (rpcMethod === "getblockchaininfo" || rpcMethod === "getnetworkinfo" || rpcMethod === "getwalletinfo" || rpcMethod === "getmempoolinfo") {
+                let table = '<table class = "center-table" style = "border-collapse: collapse;">';
+                table += '<thead><tr><th>Property</th><th>Value</th></tr></thead>';
+                table += '<tbody>';
+                for (let key in data) {
+                   table += `<tr><td>${key}</td><td>${data[key]}</td></tr>`;
+                 }
+
+                table += '</tbody></table>';
+                document.getElementById("result").innerHTML = table;
+                document.getElementById("result").innerHTML = table;
+                hide(['btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm'])
+                document.getElementById('result').style.visibility = 'visible';
+                let divIdsToShow = ['balance'];
+                showDivs(divIdsToShow);
+              }
+              if (rpcMethod === 'listtransactions') {
+                let transactionsElement = document.getElementById("transactions");
+                let table = transactionsElement.getElementsByTagName('table')[0];
+                let tbody = table ? table.getElementsByTagName('tbody')[0] : null;
+                // If the table doesn't exist, create it
+                if (!table) {
+                  table = document.createElement('table');
+                  tbody = document.createElement('tbody');
+                  table.appendChild(tbody);
+                  transactionsElement.appendChild(table);
+                  table.style.border = "none";
+                  table.style.borderCollapse = "collapse";
+                  table.style.borderSpacing = "0";
+                } else {
+                  // If the table exists, clear its contents
+                  while (tbody.firstChild) {
+                    tbody.removeChild(tbody.firstChild);
+                  }
+                }
+                // Create table rows for each transaction
+                data.forEach(transaction => {
+                  let row = document.createElement('tr');
+                  let txidCell = document.createElement('td');
+                  txidCell.textContent = String(transaction.txid).substring(0, 21) + "...";
+                  txidCell.style.border = "none";
+                  row.appendChild(txidCell);
+                  let amountCell = document.createElement('td');
+                  if (transaction.amount !== undefined) {
+                    amountCell.textContent = String(transaction.amount);
+                  }
+                  amountCell.style.border = "none";
+                  row.appendChild(amountCell);
+                  tbody.appendChild(row);
+                });
+              }
+            }).catch((error) => {
+              //console.error('Error:', error);
+            });
+          }
+
+	function sendToAddress(address, amount) {
+	 fetch(`${window.location.href}/sendtoaddress/${address}/${amount}`).then(response => response.json()).then(data => {
+	  if (data.error) {
+	    console.error('Error:', data.error);
+	  } else {
+	    console.log('Transaction ID:', data.result);
+	  }
+	 });
+	}
+
+
+	function estimateSmartFee() {
+	 fetch(`${window.location.href}/estimatesmartfee`)
+	   .then(response => {
+	     if (!response.ok) {
+	       throw new Error(`HTTP error: ${response.status}`);
+	     }
+	     return response.json();
+	   })
+	   .then(data => {
+	     if (data.error) {
+	       console.error('Error:', data.error);
+	     } else {
+	       
+
+	       const feeEstimate = data.feerate;
+	       console.log(feeEstimate)
+	       const satsvByte = Math.trunc((feeEstimate * 100000000) / 1000);
+	       document.getElementById('feerate').innerHTML = `Estimated fee: ${satsvByte} sat/vByte`;
+	     }
+	   })
+	   .catch(error => {
+	     console.error('There was a problem with the fetch operation:', error);
+	   });
+	}
+
+
+        </script>
+    </body>
+  </html>
