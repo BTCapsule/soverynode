@@ -14,7 +14,7 @@ tunnel.on('close', () => {
 }); })();
 
 let host = 'localhost' // Replace with your Bitcoin node's IP addr
-let port = 8332 // Use 18332 for testnet
+let port = 18332 // Use 18332 for testnet
 let user = "user"
 let pass = 'pass'
 
@@ -51,13 +51,14 @@ app.get('/runrpc/:rpcMethod', function (req, res) {
 app.get('/sendtoaddress/:address/:amount', function (req, res) {
  const address = req.params.address;
  const amount = req.params.amount;
- const params = [address, amount, null, null, false, 6];
+ const params = [address, amount, '', '', true];
 
  bitcoin_rpc.call('sendtoaddress', params, function (err, rpcRes) {
  if (err) {
   res.status(500).send({ error: "I have an error :\n" + err });
  } else if (typeof rpcRes.result !== ' undefined') {
   res.send(JSON.stringify(rpcRes.result))
+  console.log('success');
  } else {
   res.status(500).send("No error and no result ?");
  }
