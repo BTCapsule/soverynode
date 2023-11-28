@@ -1,18 +1,31 @@
+const QRCode = require('qrcode');
+const opn = require('opn');
+const fs = require('fs');
 let express = require('express');
 let cors = require('cors');
 let app = express();
 let bitcoin_rpc = require('node-bitcoin-rpc');
 let localtunnel = require('localtunnel');
-const fs = require('fs');
 
-(async () => { const tunnel = await localtunnel({ port: 3001 }); 
-// the assigned public url for your tunnel 
-// i.e. https://abcdefgjhij.localtunnel.me 
-tunnel.url;
-console.log(tunnel.url) 
-tunnel.on('close', () => { 
-// tunnels are closed 
-}); })();
+(async () => {
+ const tunnel = await localtunnel({ port: 3001 });
+ tunnel.url;
+ console.log(tunnel.url)
+ const qrCode = await QRCode.toDataURL(tunnel.url);
+
+ // Save the QR code as an HTML file
+ const html = `<!DOCTYPE html><html><body><img src="${qrCode}"><br><br>Your url is: ${tunnel.url}</body></html>`;
+ fs.writeFileSync('qrcode.html', html);
+
+ // Open the HTML file in the browser
+ opn('qrcode.html');
+
+ tunnel.on('close', () => {
+   // tunnels are closed
+ });
+})();
+
+
 
 let host = 'localhost' // Replace with your Bitcoin node's IP addr
 let port = 18332 // Use 18332 for testnet
