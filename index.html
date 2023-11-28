@@ -212,7 +212,7 @@
       <div id="button-container" class="exclude">
         <button id="displayBalance">getbalance</button>
         <button onclick="runRPC('getblockchaininfo')">getblockchaininfo</button>
-        <button onclick="runRPC('getmempoolinfo')">getmempoolinfo</button>
+        <button onclick="runRPC('listwallets')">listwallets</button>
         <button onclick="runRPC('getwalletinfo')">getwalletinfo</button>
       </div>
       <div id="balance"></div>
@@ -305,7 +305,8 @@
 
           function hide(elementIds) {
             // Loop through the array of element IDs
-            for (var i = 0; i < elementIds.length; i++) {
+            
+for (var i = 0; i < elementIds.length; i++) {
               // Get the element by its ID
               var element = document.getElementById(elementIds[i]);
               element.style.visibility = 'hidden';
@@ -519,13 +520,65 @@
                 });
                 qrcode.addQuietZone(10);
               }
-              if (rpcMethod === "getblockchaininfo" || rpcMethod === "getnetworkinfo" || rpcMethod === "getwalletinfo" || rpcMethod === "getmempoolinfo") {
+
+
+
+
+
+
+
+
+
+if (rpcMethod === "listwallets") {
+ let table = '<table class = "center-table" style = "border-collapse: collapse;">'  
+table += '<thead><tr><th>Choose a Wallet</th></tr></thead>';
+ table += '<tbody>';
+
+ // Check if 'wallets.txt' exists
+ fetch(`${window.location.href}/wallets.txt`)
+ .then(responseWallet => responseWallet.text())
+ .then(dataWallet => {
+   // Split the data into an array of wallet names
+   const allWallets = dataWallet.split('\n');
+
+   // Populate the table with the wallet names
+   for (let i = 0; i < allWallets.length; i++) {
+     table += `<tr><td onclick="loadWallet('${allWallets[i]}'); runRPC('getbalance');">${allWallets[i]}</td></tr>`;
+   }
+
+   table += '</tbody></table>';
+   document.getElementById("result").innerHTML = table;
+   document.getElementById('result').style.visibility = 'visible';
+      document.getElementById('result').style.fontSize = '80px';
+   
+   let divIdsToShow = ['balance'];
+   showDivs(divIdsToShow);
+ })
+ .catch(err => {
+  
+for (let key in data) {
+       table += `<tr><td onclick="loadWallet('${data[key]}')">${data[key]}</td></tr>`;
+   }
+   table += '</tbody></table>';
+   document.getElementById("result").innerHTML = table;
+   document.getElementById('result').style.visibility = 'visible';
+   let divIdsToShow = ['balance'];
+   showDivs(divIdsToShow);
+    document.getElementById('result').style.fontSize = '80px';
+   
+   });
+
+}
+
+              if (rpcMethod === "getblockchaininfo" || rpcMethod === "getnetworkinfo" || rpcMethod === "getwalletinfo") {
                 let table = '<table class = "center-table" style = "border-collapse: collapse;">';
                 table += '<thead><tr><th>Property</th><th>Value</th></tr></thead>';
                 table += '<tbody>';
                 for (let key in data) {
+
                    table += `<tr><td>${key}</td><td>${data[key]}</td></tr>`;
                  }
+               
 
                 table += '</tbody></table>';
                 document.getElementById("result").innerHTML = table;
@@ -533,7 +586,9 @@
                 hide(['btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm'])
                 document.getElementById('result').style.visibility = 'visible';
                 let divIdsToShow = ['balance'];
-                showDivs(divIdsToShow);
+              document.getElementById('result').style.fontSize = '16px';
+      
+             showDivs(divIdsToShow);
               }
               if (rpcMethod === 'listtransactions') {
                 let transactionsElement = document.getElementById("transactions");
@@ -585,6 +640,18 @@
 	 });
 	}
 
+       
+	function loadWallet(wallet) {
+	 fetch(`${window.location.href}/loadwallet/${wallet}`).then(response => response.json()).then(data => {
+	  if (data.error) {
+	    console.error('Error:', data.error);
+	  } else {
+	    console.log('Wallet:', data.result);
+	  }
+	 });
+	}
+
+       
 
 	function estimateSmartFee() {
 	 fetch(`${window.location.href}/estimatesmartfee`)

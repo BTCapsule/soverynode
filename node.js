@@ -3,6 +3,7 @@ let cors = require('cors');
 let app = express();
 let bitcoin_rpc = require('node-bitcoin-rpc');
 let localtunnel = require('localtunnel');
+const fs = require('fs');
 
 (async () => { const tunnel = await localtunnel({ port: 3001 }); 
 // the assigned public url for your tunnel 
@@ -15,7 +16,7 @@ tunnel.on('close', () => {
 
 let host = 'localhost' // Replace with your Bitcoin node's IP addr
 let port = 8332 // Use 18332 for testnet
-let user = "user"
+let user = 'user'
 let pass = 'pass'
 
 bitcoin_rpc.init(host, port, user, pass)
@@ -37,7 +38,35 @@ app.get('/runrpc/:rpcMethod', function (req, res) {
       console.log(rpcRes.result)
      }
 
-    res.send(JSON.stringify(rpcRes.result))
+
+
+if (rpcMethod === 'listwallets') {
+ const allWallets = rpcRes.result;
+
+ // Check if the 'wallets.txt' file exists
+ if (fs.existsSync('wallets.txt')) {
+ // If the file exists, read its contents
+ const existingWallets = fs.readFileSync('wallets.txt', 'utf8').split('\n');
+
+ // Check if the new wallet names are already in the file
+ const newWallets = allWallets.filter(wallet => !existingWallets.includes(wallet));
+
+ // If there are new wallet names, write them to the file
+ if (newWallets.length > 0) {
+  const combinedWallets = [...existingWallets, ...newWallets];
+  fs.writeFileSync('wallets.txt', combinedWallets.join('\n'));
+  console.log('New wallet names saved to wallets.txt');
+ }
+ } else {
+ // If the file does not exist, write the new wallet names to the file
+ fs.writeFileSync('wallets.txt', allWallets.join('\n'));
+ console.log('Wallet names saved to wallets.txt');
+ }
+}
+
+
+
+      res.send(JSON.stringify(rpcRes.result))
   } else {
     res.status(500).send("No error and no result ?");
   }
@@ -64,6 +93,53 @@ app.get('/sendtoaddress/:address/:amount', function (req, res) {
  }
  });
 });
+
+
+
+
+
+
+
+
+app.get('/loadwallet/:wallet', function (req, res) {
+ const wallet = req.params.wallet;
+ const params = [wallet];
+
+
+const data = fs.readFileSync('wallets.txt', 'utf8');
+ const allWallets = data.split('\n');
+
+ const index = allWallets.indexOf(wallet);
+   if (index !== -1) {
+     allWallets.splice(index, 1);
+   }
+
+   // Unload each wallet in the remaining list
+   allWallets.forEach(function(unloadWallet) {
+     bitcoin_rpc.call('unloadwallet', [unloadWallet], function (err, rpcRes) {
+       if (err) {
+         console.log("Error unloading wallet: " + err);
+       } else {
+         console.log('Unloaded wallet: ' + unloadWallet);
+       }
+     });
+   });
+
+   // Load the new wallet
+   bitcoin_rpc.call('loadwallet', params, function (err, rpcRes) {
+     if (err) {
+       res.status(500).send({ error: "I have an error :\n" + err });
+     } else if (typeof rpcRes.result !== 'undefined') {
+       res.send(JSON.stringify(rpcRes.result));
+       console.log(wallet + " loaded");
+     } else {
+       res.status(500).send("No error and no result ?");
+     }
+   });
+});
+
+
+
 
 
 app.get('/estimatesmartfee', function (req, res) {
