@@ -29,7 +29,7 @@ Follow that link on your mobile browser.
 Enter your PUBLIC IP address.
 
 WARNING
-The send function does work, but fees are very high right now. You cannot choose a fee yet, but I have it set to subtractfeefromamount for testing. Whatever you send will automatically take the fee from the sent amount, but the receiver will receive less.
+The send function does work, but fees are very high right now. You cannot choose a fee yet, but I have it set to economical. Fee options coming soon.
 
 Make sure your .conf file has:
 
