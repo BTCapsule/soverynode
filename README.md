@@ -44,3 +44,12 @@ prune=550
 
 Pruning is optional.
 Username and password can be changed in node.js
+
+## To do
+
+• Add fee estimation and options
+• Load wallets
+• Remove localtunnel dependency
+• Eventually add every RPC call
+• Major UI/UX upgrades
+• Add better comments and documentation
