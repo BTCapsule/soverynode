@@ -29,9 +29,7 @@ Follow that link on your mobile browser.
 Enter your PUBLIC IP address.
 
 WARNING
-The send function does work, but fees are very high right now. 
-I have it set to confirm after an hour. 
-Later, I will add the option to select from a range of fees or add your own.
+The send function does work, but fees are very high right now. You cannot choose a fee yet, but I have it set to subtractfeefromamount for testing. Whatever you send will automatically take the fee from the sent amount, but the receiver will receive less.
 
 Make sure your .conf file has:
 
@@ -46,3 +44,12 @@ prune=550
 
 Pruning is optional.
 Username and password can be changed in node.js
+
+## To do
+
+• Add fee estimation and options
+• Load wallets
+• Remove localtunnel dependency
+• Eventually add every RPC call
+• Major UI/UX upgrades
+• Add better comments and documentation
