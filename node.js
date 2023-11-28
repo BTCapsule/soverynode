@@ -14,7 +14,7 @@ tunnel.on('close', () => {
 }); })();
 
 let host = 'localhost' // Replace with your Bitcoin node's IP addr
-let port = 18332 // Use 18332 for testnet
+let port = 8332 // Use 18332 for testnet
 let user = "user"
 let pass = 'pass'
 
