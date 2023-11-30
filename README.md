@@ -45,6 +45,10 @@ rpcpassword=pass
 prune=550
 ```
 
+To edit your conf file, open Bitcoin Core. Choose Settings>Options>Open Configuration File. 
+
+![Conf file](https://i.nostr.build/deW4.gif)
+
 Pruning is optional.
 Username and password can be changed in node.js
 
