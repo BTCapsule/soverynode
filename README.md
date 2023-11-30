@@ -1,6 +1,6 @@
 # soverynode
 
-![soverynode](https://i.nostr.build/Yrj7.gif)
+![soverynode](https://i.nostr.build/WY3Y.gif)
 
 When we download a hot wallet for our phone, we must depend on the wallet provider's Bitcoin node. If we run a full node, but do not use it to transact, then our node is doing nothing to protect us.
 
