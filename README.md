@@ -1,4 +1,7 @@
 # soverynode
+
+![soverynode](https://i.nostr.build/Yrj7.gif)
+
 When we download a hot wallet for our phone, we must depend on the wallet provider's Bitcoin node. If we run a full node, but do not use it to transact, then our node is doing nothing to protect us.
 
 But when we use a full node (including pruned) to transact with Bitcoin, our node has now become an "economical node" and we are active participants in the Bitcoin network.
