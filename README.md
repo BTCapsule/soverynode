@@ -8,7 +8,7 @@ But when we use a full node (including pruned) to transact with Bitcoin, our nod
 
 With soverynode, your node can become an economic node and Bitcoin Core can be your portable hot wallet.
 
-Soverynode is written in nodejs and html. Once its running, it creates a secure tunnel between your localhost and the internet with localtunnel. Follow the link, and you will be taken to a GUI of your Bitcoin Core node that makes simple RPC calls. 
+Soverynode is written in nodejs and html. Once its running, it creates a secure tunnel between your localhost and the internet with tunnelmole. Scan the QR code, and you will be taken to a GUI wallet of your Bitcoin Core node that makes simple RPC calls. 
 
 ## How to install
 
@@ -27,9 +27,7 @@ cd soverynode
 ```
 node node.js
 ```
-The terminal will provide a link. 
-Follow that link on your mobile browser.
-Enter your PUBLIC IP address.
+A local webpage will display a QR code and associated link. Follow that link on your mobile browser.
 
 WARNING
 The send function does work, but fees are very high right now. You cannot choose a fee yet, but I have it set to economical. Fee options coming soon.
@@ -56,9 +54,7 @@ Username and password can be changed in node.js
 
 • Add fee estimation and options
 
-• Load wallets
-
-• Remove localtunnel dependency
+• Remove tunnelmole dependency
 
 • Eventually add every RPC call
 
