@@ -1,0 +1,1 @@
+{"version":3,"file":"config-instance.example.js","sourceRoot":"","sources":["../config-instance.example.ts"],"names":[],"mappings":"AAAA,MAAM,cAAc,GAAG;IACnB,MAAM,EAAE;QACJ,QAAQ,EAAE,mCAAmC;QAC7C,YAAY,EAAE,gCAAgC;KACjD;IACD,OAAO,EAAE;QACL,aAAa,EAAE,IAAI;KACtB;CACJ,CAAA;AAED,eAAe,cAAc,CAAC"}

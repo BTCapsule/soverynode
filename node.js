@@ -5,35 +5,37 @@ let express = require('express');
 let cors = require('cors');
 let app = express();
 let bitcoin_rpc = require('node-bitcoin-rpc');
-let localtunnel = require('localtunnel');
+const path = require('path');
+const tunnelmole = require('tunnelmole/cjs');
 
-(async () => {
- const tunnel = await localtunnel({ port: 3001 });
- tunnel.url;
- console.log(tunnel.url)
- const qrCode = await QRCode.toDataURL(tunnel.url);
+const startTunnelmole = async () => {
+  const url = await tunnelmole({
+      port: 3001
+  });
+  console.log(url);
+  const qrCode = await QRCode.toDataURL(url);
 
  // Save the QR code as an HTML file
- const html = `<!DOCTYPE html><html><body><img src="${qrCode}"><br><br>Your url is: ${tunnel.url}</body></html>`;
+ const html = `<!DOCTYPE html><html><body><img src="${qrCode}"><br><br>Your url is: ${url}</body></html>`;
  fs.writeFileSync('qrcode.html', html);
 
  // Open the HTML file in the browser
  opn('qrcode.html');
 
- tunnel.on('close', () => {
-   // tunnels are closed
- });
-})();
+}
+
+startTunnelmole();
 
 
 
 let host = 'localhost' // Replace with your Bitcoin node's IP addr
-let port = 8332 // Use 18332 for testnet
+let port = 18332 // Use 18332 for testnet
 let user = 'user'
 let pass = 'pass'
 
 bitcoin_rpc.init(host, port, user, pass)
 bitcoin_rpc.setTimeout(30000) // 30 seconds
+
 
 app.use(cors());
 
@@ -179,4 +181,6 @@ app.use(express.static(__dirname));
 app.listen(3001, function () {
   console.log('Server listening on port 3001!');
 });
+
+
 

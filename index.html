@@ -489,7 +489,7 @@ for (var i = 0; i < elementIds.length; i++) {
 		 if (args && args.length > 0) {
 		  argsString = args.join('/');
 		 }
-            fetch(`${window.location.href}/runrpc/${rpcMethod}/${argsString}`).then(response => response.json()).then(data => {
+            fetch(`/runrpc/${rpcMethod}/${argsString}`).then(response => response.json()).then(data => {
               if (rpcMethod === 'getbalance') {
                 confirmedBalance = data;
               } else if (rpcMethod === 'getunconfirmedbalance') {
@@ -535,7 +535,7 @@ table += '<thead><tr><th>Choose a Wallet</th></tr></thead>';
  table += '<tbody>';
 
  // Check if 'wallets.txt' exists
- fetch(`${window.location.href}/wallets.txt`)
+ fetch(`/wallets.txt`)
  .then(responseWallet => responseWallet.text())
  .then(dataWallet => {
    // Split the data into an array of wallet names
@@ -631,7 +631,7 @@ for (let key in data) {
           }
 
 	function sendToAddress(address, amount) {
-	 fetch(`${window.location.href}/sendtoaddress/${address}/${amount}`).then(response => response.json()).then(data => {
+	 fetch(`/sendtoaddress/${address}/${amount}`).then(response => response.json()).then(data => {
 	  if (data.error) {
 	    console.error('Error:', data.error);
 	  } else {
@@ -642,7 +642,7 @@ for (let key in data) {
 
        
 	function loadWallet(wallet) {
-	 fetch(`${window.location.href}/loadwallet/${wallet}`).then(response => response.json()).then(data => {
+	 fetch(`/loadwallet/${wallet}`).then(response => response.json()).then(data => {
 	  if (data.error) {
 	    console.error('Error:', data.error);
 	  } else {
@@ -654,7 +654,7 @@ for (let key in data) {
        
 
 	function estimateSmartFee() {
-	 fetch(`${window.location.href}/estimatesmartfee`)
+	 fetch(`/estimatesmartfee`)
 	   .then(response => {
 	     if (!response.ok) {
 	       throw new Error(`HTTP error: ${response.status}`);

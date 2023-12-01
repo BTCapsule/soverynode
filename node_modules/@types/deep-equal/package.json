@@ -1,0 +1,30 @@
+{
+    "name": "@types/deep-equal",
+    "version": "1.0.4",
+    "description": "TypeScript definitions for deep-equal",
+    "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/deep-equal",
+    "license": "MIT",
+    "contributors": [
+        {
+            "name": "remojansen",
+            "githubUsername": "remojansen",
+            "url": "https://github.com/remojansen"
+        },
+        {
+            "name": "Jay Anslow",
+            "githubUsername": "janslow",
+            "url": "https://github.com/janslow"
+        }
+    ],
+    "main": "",
+    "types": "index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/deep-equal"
+    },
+    "scripts": {},
+    "dependencies": {},
+    "typesPublisherContentHash": "85ac986331d5c818ed3145eb64e35597877279aececa43b7afa1d32582b03266",
+    "typeScriptVersion": "4.5"
+}

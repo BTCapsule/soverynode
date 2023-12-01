@@ -1,0 +1,1 @@
+{"version":3,"file":"domain-reservation-error.js","sourceRoot":"","sources":["../../../src/message-handlers/domain-reservation-error.ts"],"names":[],"mappings":"AAEA,MAAM,CAAC,OAAO,UAAU,sBAAsB,CAAC,OAA+B;IAC1E,OAAO,CAAC,IAAI,CACR,2CAA2C,OAAO,CAAC,SAAS,qDAAqD,CACpH,CAAC;AACN,CAAC;AAED,OAAO,EACH,sBAAsB,EACzB,CAAA"}

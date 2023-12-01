@@ -1,0 +1,1 @@
+{"version":3,"file":"packageJson.js","sourceRoot":"","sources":["../../../src/node/packageJson.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,IAAI,CAAC;AACpB,OAAO,EAAE,QAAQ,EAAE,MAAM,4BAA4B,CAAC;AAEtD,MAAM,WAAW,GAAG,IAAI,CAAC,KAAK,CAAC,EAAE,CAAC,YAAY,CAAC,GAAG,QAAQ,eAAe,CAAC,CAAC,QAAQ,EAAE,CAAC,CAAC;AAEvF,OAAO,EAAE,WAAW,EAAE,CAAA"}
