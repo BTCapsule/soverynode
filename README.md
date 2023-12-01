@@ -1,9 +1,12 @@
 # soverynode
+
+![soverynode](https://i.nostr.build/WY3Y.gif)
+
 When we download a hot wallet for our phone, we must depend on the wallet provider's Bitcoin node. If we run a full node, but do not use it to transact, then our node is doing nothing to protect us.
 
-But when we use a full node (including pruned) to transact with Bitcoin, our node has now become an "economical node" and we are active participants in the Bitcoin network.
+But when we use a full node (including pruned) to transact with Bitcoin, our node has now become an "economic node" and we are active participants in the Bitcoin network.
 
-With soverynode, your node can become an economical node and Bitcoin Core can be your portable hot wallet.
+With soverynode, your node can become an economic node and Bitcoin Core can be your portable hot wallet.
 
 Soverynode is written in nodejs and html. Once its running, it creates a secure tunnel between your localhost and the internet with localtunnel. Follow the link, and you will be taken to a GUI of your Bitcoin Core node that makes simple RPC calls. 
 
@@ -42,14 +45,23 @@ rpcpassword=pass
 prune=550
 ```
 
+To edit your conf file, open Bitcoin Core. Choose Settings>Options>Open Configuration File. 
+
+![Conf file](https://i.nostr.build/deW4.gif)
+
 Pruning is optional.
 Username and password can be changed in node.js
 
 ## To do
 
 • Add fee estimation and options
+
 • Load wallets
+
 • Remove localtunnel dependency
+
 • Eventually add every RPC call
+
 • Major UI/UX upgrades
+
 • Add better comments and documentation
