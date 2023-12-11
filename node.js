@@ -7,6 +7,18 @@ let app = express();
 let bitcoin_rpc = require('node-bitcoin-rpc');
 const path = require('path');
 const tunnelmole = require('tunnelmole/cjs');
+const bip39 = require('bip39');
+const ecc = require('tiny-secp256k1');
+const { BIP32Factory } = require('bip32');
+const bitcoin = require('bitcoinjs-lib');
+const crypto = require('crypto');
+
+
+const bip32 = BIP32Factory(ecc);
+
+
+
+
 
 const startTunnelmole = async () => {
   const url = await tunnelmole({
@@ -28,16 +40,56 @@ startTunnelmole();
 
 
 
-let host = 'localhost' // Replace with your Bitcoin node's IP addr
-let port = 18332 // Use 18332 for testnet
+let host = 'localhost'
 let user = 'user'
 let pass = 'pass'
+let network;
+let port;
+
+if (process.argv.includes('-testnet')) {
+ network = bitcoin.networks.testnet;
+ port = 18332;
+} else {
+ network = bitcoin.networks.bitcoin;
+ port = 8332;
+}
 
 bitcoin_rpc.init(host, port, user, pass)
 bitcoin_rpc.setTimeout(30000) // 30 seconds
 
 
 app.use(cors());
+
+console.log(network)
+
+
+ // Get the list of wallets
+ bitcoin_rpc.call('listwallets', [], function (err, wallets) {
+  if (err) {
+    console.error("Error listing wallets:", err);
+    return;
+  }
+
+  // Get the most recently loaded wallet
+  const mostRecentWalletName = wallets.result[wallets.result.length - 1];
+
+  // Unload each wallet except for the most recently loaded one
+  wallets.result.forEach(function(walletName) {
+    if (walletName !== mostRecentWalletName) {
+      bitcoin_rpc.call('unloadwallet', [walletName], function (err, result) {
+        if (err) {
+          console.error("Error unloading wallet:", err);
+        } else {
+          console.log("Unloaded wallet:", walletName);
+        }
+      });
+    }
+  });
+ });
+
+
+
+
 
 
 app.get('/runrpc/:rpcMethod', function (req, res) {
@@ -52,6 +104,7 @@ app.get('/runrpc/:rpcMethod', function (req, res) {
     if (rpcMethod == 'getwalletinfo'){
       console.log(rpcRes.result)
      }
+
 
 
 
@@ -87,6 +140,8 @@ if (rpcMethod === 'listwallets') {
   }
  });
 });
+
+
 
 
 
@@ -172,6 +227,181 @@ app.get('/estimatesmartfee', function (req, res) {
    }
  });
 });
+
+
+
+
+
+
+app.get('/getnewaddress', function (req, res) {
+
+bitcoin_rpc.call('listwallets', [], function (err, wallets) {
+   if (err) {
+     res.status(500).send({ error: "I have an error :\n" + err });
+     return;
+   }
+let loadedWallet = wallets.result[0]
+   const data = fs.readFileSync(`${loadedWallet}.json`, 'utf8');
+   const wallet = JSON.parse(data);
+
+
+ // Derive the seed from the mnemonic
+ const seed = bip39.mnemonicToSeedSync(wallet.mnemonic);
+
+ // Generate a new key pair from the seed using a different index in the derivation path
+ const node = bip32.fromSeed(seed, network);
+
+let lastUsedIndex = parseInt(wallet.index);
+
+  // Derive the next index in the chain
+let newIndex = lastUsedIndex + 1;
+
+
+let path;
+if (network === bitcoin.networks.bitcoin) {
+ path = `m/84'/0'/0'/0/${newIndex}`;
+} else if (network === bitcoin.networks.testnet) {
+ path = `m/84'/1'/0'/0/${newIndex}`;
+} else {
+ console.error('Unknown network');
+ return;
+}
+
+const keyPair = node.derivePath(path);
+
+
+
+
+const { address } = bitcoin.payments.p2wpkh({ pubkey: keyPair.publicKey, network });
+
+
+wallet.index = newIndex;
+  fs.writeFileSync(`${loadedWallet}.json`, JSON.stringify(wallet));
+
+res.send(JSON.stringify({address: address}));
+
+bitcoin_rpc.call('importprivkey', [keyPair.toWIF(), "", false], function (err, rpcRes) {
+
+
+  if (err) {
+      res.status(500).send({ error: "I have an error :\n" + err });
+
+  } else {
+
+	console.log("Key imported successfully");
+  }
+
+});
+
+});
+});
+
+
+
+
+
+
+
+
+app.get('/createwallet/:name', function (req, res) {
+ const name = req.params.name;
+ const params = [name];
+
+bitcoin_rpc.call('createwallet', [name, false, true], function (err, rpcRes) {
+  if (err) {
+    res.status(500).send({ error: "I have an error :\n" + err });
+  } else if (typeof rpcRes.result !== 'undefined') {
+
+
+const data = fs.readFileSync('wallets.txt', 'utf8');
+ const allWallets = data.split('\n');
+ const index = allWallets.indexOf(name);
+   if (index !== -1) {
+     allWallets.splice(index, 1);
+   }
+
+const unloadPromises = allWallets.map(function(unloadWallet) {
+ return new Promise((resolve, reject) => {
+   bitcoin_rpc.call('unloadwallet', [unloadWallet], function (err, rpcRes) {
+     if (err) {
+       console.log("Error unloading wallet: " + err);
+       reject(err);
+     } else {
+       console.log('Unloaded wallet: ' + unloadWallet);
+       resolve();
+     }
+   });
+ });
+});
+
+
+Promise.all(unloadPromises)
+ .then(() => {
+
+// Add the new wallet name to the array of all wallets
+allWallets.push(name);
+
+// Write the updated array of all wallets to the wallets.txt file
+fs.writeFileSync('wallets.txt', allWallets.join('\n'));
+
+console.log('Wallet names saved to wallets.txt');
+
+
+// Generate a random mnemonic
+const mnemonic = bip39.generateMnemonic();
+
+// Convert mnemonic to a seed
+const seed = bip39.mnemonicToSeedSync(mnemonic);
+
+// Derive the master private key
+const master = bip32.fromSeed(seed, network);
+
+let path;
+if (network === bitcoin.networks.bitcoin) {
+ path = "m/84'/0'/0'/0/1";
+} else if (network === bitcoin.networks.testnet) {
+ path = "m/84'/1'/0'/0/1";
+} else {
+ console.error('Unknown network');
+ return;
+}
+
+const account = master.derivePath(path);
+
+
+
+
+// Generate a new key pair from the seed
+
+let wif = account.toWIF();
+const { address } = bitcoin.payments.p2wpkh({ pubkey: account.publicKey, network });
+
+ // Save the mnemonic and address to a file
+ fs.writeFileSync(`${name}.json`, JSON.stringify({ mnemonic, address, index: 2 }));
+
+     res.send(JSON.stringify({ wallet: {address}, mnemonic}));
+     console.log(name + " loaded ");
+
+
+bitcoin_rpc.call('importprivkey', [wif, "", false], function (err, rpcRes) {
+ if (err) {
+  res.status(500).send({ error: "I have an error :\n" + err });
+ } else {
+console.log('key imported')
+ }
+});
+
+
+
+
+ })
+
+  } else {
+       res.status(500).send("No error and no result ?");
+  }
+ });
+});
+
 
 
 

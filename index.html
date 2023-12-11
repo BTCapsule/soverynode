@@ -185,6 +185,25 @@
       }
 
 
+
+      #walletName {
+        margin-top: 200px;
+        background-color: black;
+        color: white;
+        font-size: 32px;
+        width: 800px;
+        border: none;
+        outline: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        border-bottom: 1px solid white;
+      }
+
+
       #feerate {
         color: white;
         font-size: 36px;
@@ -202,7 +221,20 @@
       #html5-qrcode-button-camera-stop {
         visibility: hidden;
       }
+    
+
      
+	.word {
+	 font-family: sans-serif;
+	 font-size: 48px;
+	 color: black;
+	 background-color: white;
+	 margin: 10px;
+	 padding: 10px;
+	}
+	   
+
+ 
     </style>
     <body>
       <div id="reader" style="visibility: hidden; width: 100%; height: 100%; position: absolute; top:0;"></div>
@@ -211,18 +243,40 @@
       <br>
       <div id="button-container" class="exclude">
         <button id="displayBalance">getbalance</button>
-        <button onclick="runRPC('getblockchaininfo')">getblockchaininfo</button>
         <button onclick="runRPC('listwallets')">listwallets</button>
         <button onclick="runRPC('getwalletinfo')">getwalletinfo</button>
-      </div>
+	<button id="createWalletButton">createwallet</button>
+	</div>
+
       <div id="balance"></div>
       <br>
       <br>
       <div id="center">
+
+
+	<div id="create_wallet" style="visibility: hidden; text-align: right;">
+
+	 <input type="text" id="walletName" placeholder="Enter wallet name">
+	 <br><br>
+	 <button id="confirmWalletCreation">NEXT</button>
+	</div>
+</div>
+
+<div id="center">
+        <div id="mnemonicContainer">
+        </div>
+      </div>
+
+
+
+
+
+<div id="center">
         <div id="qrcode-wrapper" style="border: 10px solid white; display: none; padding: 10px;">
           <div id="qrcode"></div>
         </div>
       </div>
+
       <br>
       <br>
       <div id="center">
@@ -237,7 +291,7 @@
         <div id="address"></div>
       
       <div id="button-container2" class="exclude">
-        <button class="exclude" onclick="runRPC('getnewaddress'); setTimeout(function() {document.getElementById('qrcode-wrapper').style.display = 'inline-block';}, 500);"> RECEIVE</button>
+        <button class="exclude" onclick="getAddress(); setTimeout(function() {document.getElementById('qrcode-wrapper').style.display = 'inline-block';}, 500)"> RECEIVE</button>
         <button style="width:155px;" id="sendButton" class="exclude">SEND</button> 
       </div>
       <br>
@@ -306,12 +360,20 @@
           function hide(elementIds) {
             // Loop through the array of element IDs
             
-for (var i = 0; i < elementIds.length; i++) {
+	for (var i = 0; i < elementIds.length; i++) {
               // Get the element by its ID
               var element = document.getElementById(elementIds[i]);
               element.style.visibility = 'hidden';
             }
           }
+
+            hide(['mnemonicContainer', 'create_wallet', 'walletName', 'confirmWalletCreation', 'btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm', 'result'])
+            // Use the function
+            let divIdsToStart = ['balance', 'transactions'];
+            showDivs(divIdsToStart);
+       
+
+
           document.getElementById('amount').addEventListener('input', function() {
             // Replace the decimal point with an empty string
             if (this.value.length > 11) {
@@ -372,7 +434,7 @@ for (var i = 0; i < elementIds.length; i++) {
             event.preventDefault();
             var amount = document.getElementById('amount').value;
             var btcAddress = document.getElementById('btcAddress').value;
-            hide(['result', 'feerate', 'btcAddress', 'scanButton', 'btc', 'amount', 'confirm'])
+            hide(['mnemonicContainer', 'create_wallet', 'walletName', 'confirmWalletCreation', 'result', 'feerate', 'btcAddress', 'scanButton', 'btc', 'amount', 'confirm'])
             let divIdsToShow = ['balance', 'transactions'];
             showDivs(divIdsToShow);
             sendToAddress(btcAddress, amount);            
@@ -446,7 +508,7 @@ for (var i = 0; i < elementIds.length; i++) {
                   });
                   // Start scanning with the rear camera
                   html5QrcodeScanner.render(onScanSuccess);
-                  hide(['btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm', 'result'])                
+                  hide(['mnemonicContainer', 'create_wallet', 'walletName', 'confirmWalletCreation', 'btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm', 'result'])                
                 
                  } else {
                   let divIdsToShow = ['reader'];
@@ -454,7 +516,7 @@ for (var i = 0; i < elementIds.length; i++) {
                   document.getElementById('reader').style.height = '50%';
                   // Start scanning with the rear camera
                   html5QrcodeScanner.render(onScanSuccess);
-                  hide(['btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm', 'result'])                
+                  hide(['mnemonicContainer', 'create_wallet', 'walletName', 'confirmWalletCreation', 'btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm', 'result'])                
                }
               }).catch(function(err) {
                 document.getElementById('scanButton').style.visibility = 'visible';
@@ -478,7 +540,7 @@ for (var i = 0; i < elementIds.length; i++) {
             })
 
           document.getElementById("displayBalance").addEventListener("click", function displayBalance() {
-            hide(['btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm', 'result'])
+            hide(['mnemonicContainer', 'create_wallet', 'walletName', 'confirmWalletCreation', 'btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm', 'result'])
             // Use the function
             let divIdsToShow = ['balance', 'transactions'];
             showDivs(divIdsToShow);
@@ -501,8 +563,11 @@ for (var i = 0; i < elementIds.length; i++) {
 
 
 
-                if (rpcMethod === 'getnewaddress') {
-                hide(['result', 'feerate', 'btcAddress', 'scanButton', 'btc', 'amount', 'confirm'])
+/*                if (rpcMethod === 'getnewaddress') {
+
+		function getnewaddress() {
+
+                hide(['mnemonicContainer', 'create_wallet', 'walletName', 'confirmWalletCreation', 'result', 'feerate', 'btcAddress', 'scanButton', 'btc', 'amount', 'confirm'])
                 let divIdsToShow = ['qrcode', 'address', 'qrcode-wrapper'];
                 showDivs(divIdsToShow);
                 document.getElementById('qrcode-wrapper').style.height = '512px';
@@ -521,7 +586,7 @@ for (var i = 0; i < elementIds.length; i++) {
                 qrcode.addQuietZone(10);
               }
 
-
+*/
 
 
 
@@ -583,7 +648,7 @@ for (let key in data) {
                 table += '</tbody></table>';
                 document.getElementById("result").innerHTML = table;
                 document.getElementById("result").innerHTML = table;
-                hide(['btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm'])
+                hide(['mnemonicContainer', 'create_wallet', 'walletName', 'confirmWalletCreation', 'btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm'])
                 document.getElementById('result').style.visibility = 'visible';
                 let divIdsToShow = ['balance'];
               document.getElementById('result').style.fontSize = '16px';
@@ -677,6 +742,156 @@ for (let key in data) {
 	     console.error('There was a problem with the fetch operation:', error);
 	   });
 	}
+
+
+
+
+
+	const createWalletButton = document.getElementById('createWalletButton');
+	const createWalletDiv = document.getElementById('create_wallet');
+	const walletNameInput = document.getElementById('walletName');
+	const confirmWalletCreationButton = document.getElementById('confirmWalletCreation');
+
+	createWalletButton.addEventListener('click', function() {
+         let divIdsToShow = ['create_wallet', 'walletName', 'confirmWalletCreation'];
+         showDivs(divIdsToShow);
+ 	hide(['mnemonicContainer', 'btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm', 'result'])
+	 
+	 createWalletDiv.style.display = 'block';
+
+	});
+
+confirmWalletCreationButton.addEventListener('click', function() {
+ const walletName = walletNameInput.value;
+ const rpcMethod = 'createwallet';
+ const params = [walletName];
+
+ // Make the RPC call
+ fetch(`/createwallet/${walletName}`)
+ .then(response => response.json())
+ .then(data => {
+ 
+ const mnemonic = data.mnemonic;
+ const words = mnemonic.split(' ');
+
+         let divIdsToShow = ['mnemonicContainer'];
+         showDivs(divIdsToShow);
+ 	hide(['create_wallet', 'walletName', 'confirmWalletCreation', 'btcAddress', 'feerate', 'scanButton', 'btc', 'amount', 'confirm', 'result'])
+	 
+
+ const mnemonicContainer = document.getElementById('mnemonicContainer');
+
+ words.forEach((word, index) => {
+  const wordElement = document.createElement('div');
+  wordElement.textContent = `${index + 1}. ${word}`;
+  wordElement.className = 'word';
+  mnemonicContainer.appendChild(wordElement);
+ });
+
+  const warningText = document.createElement('div');
+  warningText.textContent = "WRITE THIS DOWN IN THE ORDER SHOWN. YOU WILL NEVER SEE THIS AGAIN!";
+  warningText.style.fontFamily = 'sans-serif';
+  warningText.style.fontSize = '48px';
+  warningText.style.marginTop = '15px';
+  mnemonicContainer.appendChild(warningText);
+ 
+ })
+ .catch((error) => {
+ console.error('Error:', error);
+ });
+});
+
+
+
+
+
+
+
+
+
+
+
+function getAddress() {
+fetch(`/getnewaddress`)
+ .then(response => {
+   if (!response.ok) {
+     throw new Error(`HTTP error: ${response.status}`);
+   }
+   return response.json();
+ })
+ .then(data => {
+   if (data.error) {
+     console.error('Error:', data.error);
+   } else {
+
+	console.log(data)
+	console.log(data.address)
+
+ 
+
+                hide(['mnemonicContainer', 'create_wallet', 'walletName', 'confirmWalletCreation', 'result', 'feerate', 'btcAddress', 'scanButton', 'btc', 'amount', 'confirm'])
+                let divIdsToShow = ['qrcode', 'address', 'qrcode-wrapper'];
+                showDivs(divIdsToShow);
+                document.getElementById('qrcode-wrapper').style.height = '512px';
+                document.getElementById('qrcode-wrapper').style.width = '512px';
+                document.getElementById("address").innerHTML = `${data.address}`;
+                document.getElementById("qrcode").innerHTML = ''; // Clear the QR code
+                
+                let qrcode = new QRCode(document.getElementById("qrcode"), {
+                  text: `bitcoin:${data.address}`,
+                  width: 512,
+                  height: 512,
+                  colorDark: "#000000",
+                  colorLight: "#ffffff",
+                  correctLevel: QRCode.CorrectLevel.H
+                });
+                qrcode.addQuietZone(10);
+              
+
+
+
+
+
+
+
+
+
+/*
+    var address = data.address;
+     let qrcode = new QRCode(document.getElementById("qrcode"), {
+       text: address,
+       width: 512,
+       height: 512,
+       colorDark: "#000000",
+       colorLight: "#ffffff",
+       correctLevel: QRCode.CorrectLevel.H
+     });
+     qrcode.addQuietZone(10);
+*/
+
+
+
+
+
+   }
+ })
+ .catch(error => {
+   console.error('There was a problem with the fetch operation:', error);
+ });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         </script>
