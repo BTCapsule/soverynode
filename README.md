@@ -2,6 +2,12 @@
 
 ![soverynode](https://i.nostr.build/WY3Y.gif)
 
+## Added support for BIP39. 
+
+Create a mnemonic, and when an address is generated, the private key will be imported into your wallet.dat file. So your node remains economical, but can be restored into any wallet with your seed phrase.
+
+## Economic Nodes
+
 When we download a hot wallet for our phone, we must depend on the wallet provider's Bitcoin node. If we run a full node, but do not use it to transact, then our node is doing nothing to protect us.
 
 But when we use a full node (including pruned) to transact with Bitcoin, our node has now become an "economic node" and we are active participants in the Bitcoin network.
@@ -26,6 +32,11 @@ cd soverynode
 
 ```
 node node.js
+```
+Or for testnet:
+
+```
+node node.js -testnet
 ```
 A local webpage will display a QR code and associated link. Follow that link on your mobile browser.
 
