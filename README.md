@@ -47,7 +47,7 @@ Make sure your .conf file has:
 
 ```
 server=1
-rpcallowip:127.0.0.1
+rpcallowip=127.0.0.1
 rpcbind=127.0.0.1:8332
 rpcuser=user
 rpcpassword=pass
