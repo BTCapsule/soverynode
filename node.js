@@ -6,12 +6,14 @@ let cors = require('cors');
 let app = express();
 let bitcoin_rpc = require('node-bitcoin-rpc');
 const path = require('path');
-const tunnelmole = require('tunnelmole/cjs');
 const bip39 = require('bip39');
 const ecc = require('tiny-secp256k1');
 const { BIP32Factory } = require('bip32');
 const bitcoin = require('bitcoinjs-lib');
 const crypto = require('crypto');
+const secureServer = require('./secureserver');
+
+
 
 
 const bip32 = BIP32Factory(ecc);
@@ -20,23 +22,6 @@ const bip32 = BIP32Factory(ecc);
 
 
 
-const startTunnelmole = async () => {
-  const url = await tunnelmole({
-      port: 3001
-  });
-  console.log(url);
-  const qrCode = await QRCode.toDataURL(url);
-
- // Save the QR code as an HTML file
- const html = `<!DOCTYPE html><html><body><img src="${qrCode}"><br><br>Your url is: ${url}</body></html>`;
- fs.writeFileSync('qrcode.html', html);
-
- // Open the HTML file in the browser
- opn('qrcode.html');
-
-}
-
-startTunnelmole();
 
 
 
@@ -408,9 +393,6 @@ console.log('key imported')
 // Serve static files from the current directory
 app.use(express.static(__dirname));
 
-app.listen(3001, function () {
-  console.log('Server listening on port 3001!');
-});
 
 
-
+secureServer.start();
