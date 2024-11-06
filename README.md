@@ -1,4 +1,4 @@
-# soverynode
+# Node on Phone
 
 ![soverynode](https://i.nostr.build/WY3Y.gif)
 
@@ -12,9 +12,9 @@ When we download a hot wallet for our phone, we must depend on the wallet provid
 
 But when we use a full node (including pruned) to transact with Bitcoin, our node has now become an "economic node" and we are active participants in the Bitcoin network.
 
-With soverynode, your node can become an economic node and Bitcoin Core can be your portable hot wallet.
+With NOP, your node can become an economic node and Bitcoin Core can be your portable hot wallet.
 
-Soverynode is written in nodejs and html. Once its running, it creates a secure tunnel between your localhost and the internet with tunnelmole. Scan the QR code, and you will be taken to a GUI wallet of your Bitcoin Core node that makes simple RPC calls. 
+NOP is written in nodejs and html. Once its running, it creates a secure server between your that can be accessed on any device. Scan the QR code, and you will be taken to a GUI wallet of your Bitcoin Core node that makes simple RPC calls. 
 
 ## How to install
 
@@ -23,20 +23,20 @@ Make sure your Bitcoin node is running
 From the command line:
 
 ```
-git clone https://github.com/BTCapsule/soverynode
+git clone https://github.com/BTCapsule/nop
 ```
 
 ```
-cd soverynode
+cd nop
 ```
 
 ```
-node node.js
+sudo node node.js
 ```
 Or for testnet:
 
 ```
-node node.js -testnet
+sudo node node.js -testnet
 ```
 A local webpage will display a QR code and associated link. Follow that link on your mobile browser.
 
