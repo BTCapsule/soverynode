@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		
+    <title>Enter PIN</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+						overflow: hidden;
+            background-color: #f8f8f8;
+        }
+				
+				h1 {
+					
+					font-weight: normal;
+					font-size: 24px;
+					
+					
+				}
+        .container {
+            text-align: center;
+						margin-top: -200px;
+        }
+.pin-dots {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 70px;
+}
+
+.pin-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #ccc;
+    margin: 0 5px;
+}
+
+.pin-dot.filled {
+    background-color: #333;
+	}
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            
+					  gap: 20px;
+            max-width: 300px;
+            margin: 0 auto;
+						
+        }
+.numpad button {
+    font-size: 24px;
+		color: black;
+    padding: 20px;
+    border: none;
+    border-radius: 50%;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 80px;
+    height: 80px;
+}
+
+.numpad button:active {
+    background-color: #e0e0e0;
+}
+
+    .numpad button:last-child {
+        font-size: 24px;
+        border-radius: 0; 
+				transform: scaleY(1.3);
+				    transform-origin: center; 
+        background-color: transparent;
+        box-shadow: none;
+        width: auto; 
+        height: auto;
+        padding: 0;
+    }
+
+		
+		
+
+.numpad .placeholder {
+    visibility: hidden;
+}
+
+<script src="/cookies.js"></script>
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Enter Passcode</h1>
+   
+<div id="pin-dots" class="pin-dots"></div>
+        <div class="numpad">
+            <button onclick="addDigit('1')">1</button>
+            <button onclick="addDigit('2')">2</button>
+            <button onclick="addDigit('3')">3</button>
+            <button onclick="addDigit('4')">4</button>
+            <button onclick="addDigit('5')">5</button>
+            <button onclick="addDigit('6')">6</button>
+            <button onclick="addDigit('7')">7</button>
+            <button onclick="addDigit('8')">8</button>
+            <button onclick="addDigit('9')">9</button>
+            <button class="placeholder"></button>
+            <button onclick="addDigit('0')">0</button>
+         <button onclick="clearLastDigit()">&lt;</button>
+        </div>
+    </div>
+    <script>
+			
+        let attempts = 0;
+const maxAttempts = 5;
+let pinValue = '';
+
+function addDigit(digit) {
+    if (pinValue.length < 4) {
+        pinValue += digit;
+        updatePinDots();
+        
+        // Check if the PIN is complete (4 digits)
+        if (pinValue.length === 4) {
+            // Automatically submit the PIN
+            submitPin();
+        }
+    }
+	}
+
+function clearLastDigit() {
+            if (pinValue.length > 0) {
+                pinValue = pinValue.slice(0, -1);
+                updatePinDots();
+            }
+        }
+
+function updatePinDots() {
+    const pinDots = document.getElementById('pin-dots');
+    pinDots.innerHTML = '';
+    for (let i = 0; i < 4; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'pin-dot' + (i < pinValue.length ? ' filled' : '');
+        pinDots.appendChild(dot);
+    }
+}
+
+function submitPin() {
+    fetch('/verify-pin', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pin: pinValue }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('PIN verified, redirecting to:', data.redirectUrl);
+            window.location.href = data.redirectUrl;
+        } else {
+            attempts++;
+            if (attempts >= maxAttempts) {
+                alert('Maximum attempts reached. Please try again in 1 hour.');
+                disableInputs();
+            } else {
+                alert(`Invalid PIN. ${maxAttempts - attempts} attempts remaining.`);
+                clearPin();
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+}
+
+function disableInputs() {
+    const buttons = document.querySelectorAll('.numpad button');
+    buttons.forEach(button => button.disabled = true);
+}
+
+// Initialize the pin dots
+updatePinDots();
+    </script>
+</body>
+</html>
